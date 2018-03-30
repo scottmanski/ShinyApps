@@ -1,0 +1,2 @@
+# ShinyApps
+Educational Shiny Apps
