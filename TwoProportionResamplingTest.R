@@ -128,10 +128,13 @@ server <- function(input, output) {
     if (length(values$props) != 0){ # after reset, values$props is empty
       df <- dotplot_locs(values$props)
       myplot <- ggplot(df)  +
-        geom_point(aes(x ,y, colour = red), size=50/length(values$props)^0.5) +
-        scale_colour_manual(name = "red",values = c("black", "red")) + 
+        geom_point(aes(x ,y), size=50/length(values$props)^0.5) + 
         theme(legend.position="none")
       if (!is.na(as.numeric(input$cutoff))){
+        myplot <- ggplot(df)  +
+          geom_point(aes(x ,y, colour = red), size=50/length(values$props)^0.5) +
+          scale_colour_manual(name = "red",values = c("black", "red")) + 
+          theme(legend.position="none")
         myplot <- myplot + geom_vline(xintercept = as.numeric(input$cutoff), color = "red")
       }
       myplot
@@ -154,7 +157,13 @@ server <- function(input, output) {
   output$counts <- renderText({
     update_counts()
     if (!is.null(values$prob)){
-      paste(values$count, "/", length(values$props), " (", round(values$prob, 3), ")", sep = "")
+      if (!is.na(as.numeric(input$cutoff))){
+        paste(values$count, "/", length(values$props), " (", round(values$prob, 3), ")", sep = "")
+      } else if (nchar(input$cutoff)!=0){
+        "Invalid Cutoff!"
+      } else {
+        ""
+      }
     }
   })
   
